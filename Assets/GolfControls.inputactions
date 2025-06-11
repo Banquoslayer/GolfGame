@@ -1,0 +1,34 @@
+{
+    "name": "GolfControls",
+    "maps": [
+        {
+            "name": "Hit",
+            "id": "1e20901a-7c6e-4aeb-a8ea-b12a1e413657",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "56460679-434f-472b-bf07-0f6ee3b69cd9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "00a22ba0-ab42-4064-ac26-d7fb6da27539",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
