@@ -11,12 +11,19 @@ public class GameLoop : MonoBehaviour
     void Start()
     {
         CourseManager = StartCourse.GetComponent<StartCourse>();
-        CourseManager.StartHole();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        beginGame();
+    }
+
+    void beginGame()
+    {
+        if (CourseManager.isHoleStarted() == false)
+        {
+            CourseManager.StartHole();
+        }
     }
 }
