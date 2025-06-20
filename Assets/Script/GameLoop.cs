@@ -16,12 +16,12 @@ public class GameLoop : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        beginGame();
+        BeginGame();
     }
 
-    void beginGame()
+    void BeginGame()
     {
-        if (CourseManager.isHoleStarted() == false)
+        if (!CourseManager.IsHoleStarted())
         {
             CourseManager.StartHole();
         }

@@ -153,7 +153,7 @@ MonoBehaviour:
   ballMaterial: {fileID: 2100000, guid: eba98f3219b625f44ba8f71eb9b0d938, type: 2}
   selectedClub: {fileID: 11400000, guid: 4d213a56c7afb0a4f8c90419061831b2, type: 2}
   radius: 0.021335
-  dragCoefficient: 0.17
+  dragCoefficient: 0.18
   airDensity: 1.25
   liftCoefficient: 0.1
   frontSpinRPM: -3000

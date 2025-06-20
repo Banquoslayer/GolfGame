@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Driver
   m_EditorClassIdentifier: 
   clubName: Driver
-  launchAngle: 10
+  launchAngle: 12
   clubHeadSpeed: 133
   smashFactor: 1.44
