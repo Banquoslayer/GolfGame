@@ -23,16 +23,26 @@ public class Ball : MonoBehaviour
     [SerializeField] float spinScale = 0.3f;
 
     bool launchButtonPressed = false;
+    bool readytoLaunch = true;
 
     // Hit point is the point where the ball lands, used for calculating distance traveled
     private Vector3 hitPoint;
 
-    // hasHit is a flag to check if the ball has already landed, so we don't apply forces after landing
-    private bool hasHit = false;
-
     private TrailRenderer trailRenderer;
 
-    public bool HasLaunched { get; private set; }
+    public bool Launching { get; private set; }
+    private bool hasLanded;
+
+    public bool GetHasLanded()
+    {
+        return hasLanded;
+    }
+
+    private void SetHasLanded(bool value)
+    {
+        hasLanded = value;
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -49,7 +59,7 @@ public class Ball : MonoBehaviour
     {
         LaunchIfPressed();
 
-        if (HasLaunched)
+        if (Launching)
         {
             ApplyDrag();
             ApplySpin();
@@ -59,6 +69,11 @@ public class Ball : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         CheckForLanding(collision);
+    }
+
+    public bool IsReadyToLaunch()
+    {
+        return readytoLaunch;
     }
 
     void Startup()
@@ -103,7 +118,7 @@ public class Ball : MonoBehaviour
         Vector3 spinAxis = sideSpinAxis * (sideSpinRPM * rpmToRad) + backSpinAxis * (frontSpinRPM * rpmToRad);
 
         // 4. Lift is perpendicular to both spin axis and velocity (Magnus effect)
-        Vector3 liftDirection = Vector3.Cross(velocity, spinAxis).normalized;
+        Vector3 liftDirection = Vector3.Cross(velocity.normalized, spinAxis.normalized).normalized;
 
         float spinSpeed = spinAxis.magnitude;
         if (spinSpeed < 0.001f) return;  // avoid division by zero
@@ -114,11 +129,8 @@ public class Ball : MonoBehaviour
         rb.AddForce(liftForce);
 
         // Dampen spin values in RPM each FixedUpdate
-        sideSpinRPM *= spinDampingFactor;
-        frontSpinRPM *= spinDampingFactor;
-
-        if (Mathf.Abs(sideSpinRPM) < 1f) sideSpinRPM = 0f;
-        if (Mathf.Abs(frontSpinRPM) < 1f) frontSpinRPM = 0f;
+        frontSpinRPM = Mathf.MoveTowards(frontSpinRPM, 0f, spinDampingFactor * Time.fixedDeltaTime);
+        sideSpinRPM = Mathf.MoveTowards(sideSpinRPM, 0f, spinDampingFactor * Time.fixedDeltaTime);
 
         // ✅ Debug rays
         Debug.DrawRay(transform.position, velocity.normalized * 2f, Color.white);        // Velocity
@@ -149,7 +161,7 @@ public class Ball : MonoBehaviour
 
     void CheckForLanding(Collision collision)
     {
-        if (!hasHit)
+        if (!GetHasLanded())
             Land(collision);
     }
 
@@ -167,7 +179,8 @@ public class Ball : MonoBehaviour
         rb.useGravity = false;
         rb.linearVelocity = Vector3.zero;
 
-        hasHit = true;
+        SetHasLanded(true);
+        Launching = false;
     }
 
     void LaunchIfPressed()
@@ -181,6 +194,10 @@ public class Ball : MonoBehaviour
 
     void LaunchBall(float launchAngle, float clubHeadSpeed, float smashFactor)
     {
+        if (Launching) return;
+
+        readytoLaunch = false;
+
         ballMaterial.color = Color.red;
 
         trailRenderer.startWidth = 0.1f;
@@ -189,12 +206,9 @@ public class Ball : MonoBehaviour
 
         Vector3 launchVector = CalculateLaunchAngle(launchAngle);
 
-        if (HasLaunched) return;
-
         Vector3 velocity = launchVector.normalized * (clubHeadSpeed * smashFactor) * 0.44704f;
         rb.AddForce(velocity * rb.mass, ForceMode.Impulse);
-        //rb.linearVelocity = velocity;
-        HasLaunched = true;
+        Launching = true;
     }
 
     //TODO: Add a way to set the launch angle and club head speed dynamically, maybe through UI or input, or accuracy minigame

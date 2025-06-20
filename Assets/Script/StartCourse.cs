@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,9 +8,12 @@ public class StartCourse : MonoBehaviour
     [SerializeField] GameObject holePrefab;
     [SerializeField] GameObject ballPrefab;
 
+    GameObject ball;
+    GameObject hole;
+
     private Transform spawnPoint;
 
-    bool isHoleSet = false;
+    private bool isHoleSet = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -21,19 +25,23 @@ public class StartCourse : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       
+        if (ball && ball.GetComponent<Ball>().GetHasLanded()  && !ball.GetComponent<Ball>().IsReadyToLaunch())
+        {
+            Destroy(ball);
+            ball = Instantiate(ballPrefab, spawnPoint.position, Quaternion.identity);
+        }
     }
 
     public void StartHole()
     {
-        Instantiate(ballPrefab, spawnPoint.position, Quaternion.identity);
+        ball = Instantiate(ballPrefab, spawnPoint.position, Quaternion.identity);
 
-        Instantiate(holePrefab, Vector3.zero, Quaternion.identity);
+        hole = Instantiate(holePrefab, Vector3.zero, Quaternion.identity);
 
         isHoleSet = true;
     }
 
-    public bool isHoleStarted()
+    public bool IsHoleStarted()
     {
         return isHoleSet;
     }
